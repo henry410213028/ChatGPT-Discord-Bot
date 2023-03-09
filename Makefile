@@ -31,7 +31,7 @@ build:
 	docker-compose build
 
 deploy:
-	docker-compose up
+	docker-compose up -d
 
 down:
 	docker-compose down

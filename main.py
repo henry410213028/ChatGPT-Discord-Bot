@@ -30,7 +30,10 @@ def run():
         if interaction.user == client.user:
             return
         await interaction.response.defer()
-        receive = chatgpt.get_response(user_id, message)
+        try:
+            receive = chatgpt.get_response(user_id, message)
+        except Exception as e:
+            receive = str(e)
         await sender.send_message(interaction, message, receive)
 
     @client.tree.command(name="imagine", description="Generate image from text")

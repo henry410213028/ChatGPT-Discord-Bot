@@ -32,5 +32,8 @@ class Memory(MemoryInterface):
     def get(self, user_id: str) -> str:
         return self.storage[user_id]
 
-    def remove(self, user_id: str) -> None:
+    def clean(self, user_id: str) -> None:
+        self.storage[user_id] = [self.storage[user_id].pop()]
+
+    def reset(self, user_id: str) -> None:
         self.storage[user_id] = []

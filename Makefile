@@ -35,3 +35,6 @@ deploy:
 
 down:
 	docker-compose down
+
+run:
+	$(MAKE) build && $(MAKE) down && $(MAKE) deploy

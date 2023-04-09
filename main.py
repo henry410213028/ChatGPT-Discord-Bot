@@ -10,6 +10,7 @@ from src.chatgpt import ChatGPT, DALLE
 from src.models import OpenAIModel
 from src.memory import Memory
 from src.server import keep_alive
+from src.utils import chat_helper
 
 load_dotenv()
 
@@ -25,16 +26,31 @@ def run():
     sender = Sender()
 
     @client.tree.command(name="chat", description="Have a chat with ChatGPT")
+    @chat_helper(client=client, sender=sender)
     async def chat(interaction: discord.Interaction, *, message: str):
         user_id = interaction.user.id
-        if interaction.user == client.user:
-            return
-        await interaction.response.defer()
-        try:
-            receive = chatgpt.get_response(user_id, message)
-        except Exception as e:
-            receive = str(e)
-        await sender.send_message(interaction, message, receive)
+        return chatgpt.get_response(user_id, message)
+
+    @client.tree.command(name="new_chat", description="Start a new chat with ChatGPT")
+    @chat_helper(client=client, sender=sender)
+    async def new_chat(interaction: discord.Interaction, *, message: str):
+        user_id = interaction.user.id
+        chatgpt.reset_history(user_id)
+        return chatgpt.get_response(user_id, message)
+
+    @client.tree.command(name="summarize", description="Text summarization with ChatGPT")
+    @chat_helper(client=client, sender=sender)
+    async def summarize(interaction: discord.Interaction, *, message: str):
+        user_id = interaction.user.id
+        chatgpt.reset_history(user_id)
+        return chatgpt.get_response(user_id, f"幫我摘要以下內容並以中文回傳: {message}")
+
+    @client.tree.command(name="translate", description="Text translation with ChatGPT")
+    @chat_helper(client=client, sender=sender)
+    async def translate(interaction: discord.Interaction, *, message: str):
+        user_id = interaction.user.id
+        chatgpt.reset_history(user_id)
+        return chatgpt.get_response(user_id, f"幫我翻譯以下內容並以中文回傳: {message}")
 
     @client.tree.command(name="imagine", description="Generate image from text")
     async def imagine(interaction: discord.Interaction, *, prompt: str):
